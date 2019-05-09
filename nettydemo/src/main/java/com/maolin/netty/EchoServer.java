@@ -16,12 +16,12 @@ import java.net.InetSocketAddress;
 public class EchoServer {
     private final int port;
 
-    public EchoServer(int port) {
+    private EchoServer(int port) {
         this.port = port;
     }
 
     public static void main(String[] args) throws Exception {
-        final int port = Integer.parseInt(args[0]);
+        final int port = args.length > 0 ? Integer.parseInt(args[0]) : 9091;
         new EchoServer(port).start();
     }
 
