@@ -9,7 +9,7 @@ public class RecordReader implements Runnable {
     private CountDownLatch count;
     private File file;
 
-    public RecordReader(LinkedBlockingQueue queue, CountDownLatch count, File file) {
+    RecordReader(LinkedBlockingQueue<QuotaRecord> queue, CountDownLatch count, File file) {
         this.quotaDataQueue = queue;
         this.count = count;
         this.file = file;
@@ -17,20 +17,16 @@ public class RecordReader implements Runnable {
 
     @Override
     public void run() {
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("Path")))){
-            String line = "";
-            String[] recordDataArr = new String[3];
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))){
+            String line;
+            String[] recordDataArr;
             while((line = reader.readLine()) != null) {
                 recordDataArr = line.split(",");
                 quotaDataQueue.put(new QuotaRecord(recordDataArr[0], recordDataArr[1], Double.valueOf(recordDataArr[2])));
             }
 
             count.countDown();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
